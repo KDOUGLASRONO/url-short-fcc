@@ -61,7 +61,9 @@ app.post("/api/shorturl",(req,res)=>{
     }
     const symbols = ['!','@','*','&','^','#','%',')','(','~']
     surl = surl + Math.floor(Math.random()*10) + symbols[Math.floor(Math.random()*symbols.length)];
-    console.log(surl);
+    console.log("surl",surl);
+    shortUrls.push(surl);
+    console.log("ShortUrls array",shortUrls);
     return surl;
   }
   urlshortener(url);
@@ -74,18 +76,33 @@ app.post("/api/shorturl",(req,res)=>{
   }
   else{
     if(foundIndex<0){
+      console.log("new url");
       originalUrls.push(url);
       shortUrls.push(shortUrls.length);
+      console.log("original urls",originalUrls[0]);
       return res.json({
         original_url:url,
-        short_url:urlshortener(url)
+        short_url:shortUrls[0]
       })
     }
-    originals.push(req.body.url);
+    originalUrls.push(req.body.url);
     
 
     res.json({original_url:long_url,short_url:urlshortener(url)});
+    //console.log("shorturls:",shorturls);
+    console.log(originalUrls[0]);
  } //short_url:shortUrls[foundIndex]
+ app.get("/api/shorturl/:shorturls",(req,res)=>{
+  console.log("params",req.params);
+  const shorturl = req.params.shorturls;
+  console.log("short url",shorturl);
+  if(shortUrls.indexOf(shorturl)<0){
+    return "no such url "
+  }
+  else{
+    res.redirect(originalUrls[0]);
+  }
+ })
 })
 
 app.listen(port, function() {
